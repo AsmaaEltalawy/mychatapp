@@ -18,7 +18,7 @@ class AuthServices {
     }
   }
 
-  void register(BuildContext context, String email, String pass,
+  Future<void> register(BuildContext context, String email, String pass,
       String confirmedPass) async {
     try {
       if (pass == confirmedPass) {
