@@ -27,15 +27,15 @@ class MyMessage extends StatelessWidget {
               actions: [
                 TextButton(
                   onPressed: () {
-                    Navigator.pop(context); // يقفل الديالوج من غير حذف
+                    Navigator.pop(context); 
                   },
                   child: Text('No'),
                 ),
                 TextButton(
                   onPressed: () {
                     fireStore.deleteMessage(messageId);
-                    Navigator.pop(context); // يقفل الديالوج بعد التنفيذ
-                    print('Message deleted'); // مؤقتًا بنطبع بس
+                    Navigator.pop(context); 
+                    print('Message deleted'); 
                   },
                   child: Text('Yes'),
                 ),
