@@ -2,7 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:mychatapp/services/auth_services.dart';
-
 import '../wedgets/my_message.dart';
 
 class ChatScreen extends StatefulWidget {
@@ -14,7 +13,6 @@ class ChatScreen extends StatefulWidget {
 
 class _ChatScreenState extends State<ChatScreen> {
   final authServicesObject = AuthServices();
-
   final controller = TextEditingController();
 
   final FirebaseFirestore _db = FirebaseFirestore.instance;
@@ -23,6 +21,7 @@ class _ChatScreenState extends State<ChatScreen> {
 
   @override
   void initState() {
+    super.initState();
     user = FirebaseAuth.instance.currentUser;
   }
 
@@ -39,6 +38,7 @@ class _ChatScreenState extends State<ChatScreen> {
         'message': controller.text,
         'timestamp': FieldValue.serverTimestamp()
       });
+      controller.clear();
     }
   }
 
@@ -67,19 +67,23 @@ class _ChatScreenState extends State<ChatScreen> {
                     _db.collection('chats').orderBy('timestamp').snapshots(),
                 builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
                   if (!snapshot.hasData) {
-                    return CircularProgressIndicator(
-                      color: Color(0xFF264131),
+                    return Center(
+                      child: CircularProgressIndicator(
+                        color: Color(0xFF264131),
+                      ),
                     );
                   }
                   final messages = snapshot.data!.docs;
                   return ListView.builder(
+                      keyboardDismissBehavior:
+                          ScrollViewKeyboardDismissBehavior.onDrag,
                       itemCount: messages.length,
                       itemBuilder: (ctx, index) {
                         var newMessage = messages[index];
                         bool isMe = newMessage['userId'] == user?.uid;
 
                         return MyMessage(
-                            message: newMessage['message'], isMe: isMe);
+                            message: newMessage['message'], isMe: isMe,messageId: newMessage.id,);
                       });
                 }),
           ),
@@ -93,10 +97,22 @@ class _ChatScreenState extends State<ChatScreen> {
                     decoration: InputDecoration(
                         border: OutlineInputBorder(),
                         focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: Color(0xFF264131),))),
+                            borderSide: BorderSide(
+                          color: Color(0xFF264131),
+                        ))),
                   ),
                 ),
-                IconButton(onPressed: addMessage, icon: Icon(Icons.send))
+                GestureDetector(
+                  onTap: addMessage,
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 4.0),
+                    child: CircleAvatar(
+                      backgroundColor: Color(0xFF264131),
+                      radius: 20,
+                      child: Icon(Icons.send, color: Colors.white),
+                    ),
+                  ),
+                ),
               ],
             ),
           )

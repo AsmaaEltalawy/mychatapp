@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 
@@ -35,6 +36,20 @@ class AuthServices {
 
   void logout() async {
     await FirebaseAuth.instance.signOut();
+  }
+
+  Future<void> deleteMessage(String messageId) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection('chats')
+          .doc(messageId)
+          .delete();
+
+      print('✅ Message deleted successfully.');
+    } catch (e) {
+      print('❌ Error deleting message: $e');
+      rethrow; // ممكن نرميه لو حابة تعملي catch تاني برا
+    }
   }
 
 }
